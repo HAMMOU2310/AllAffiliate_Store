@@ -1,0 +1,28 @@
+backend:
+  name: git-gateway
+  branch: main # تأكد أن هذا هو اسم الفرع الرئيسي في مستودع GitHub الخاص بك
+
+media_folder: "images/uploads" # مجلد حفظ صور المنتجات
+public_folder: "/images/uploads"
+
+collections:
+  - name: "store_data"
+    label: "إدارة المتجر"
+    delete: false
+    editor:
+      preview: false
+    files:
+      - file: "data/products.json"
+        label: "قائمة المنتجات النشطة"
+        name: "products_list"
+        fields:
+          - name: "products"
+            label: "المنتجات"
+            widget: "list"
+            summary: "{{fields.title}}"
+            fields:
+              - {label: "عنوان جذاب للمنتج", name: "title", widget: "string"}
+              - {label: "الوصف المقنع (Pinterest Friendly)", name: "description", widget: "text"}
+              - {label: "رابط الأفلييت المشفر الخاص بك", name: "affiliate_link", widget: "string"}
+              - {label: "صورة المنتج العالية الجودة", name: "image", widget: "image"}
+              - {label: "تاريخ النشر", name: "date", widget: "datetime"}

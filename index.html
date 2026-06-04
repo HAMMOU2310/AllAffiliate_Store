@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>بوابتك لأفضل المنتجات الصحية الموثوقة</title>
+
+    <meta property="og:title" content="دليلك الصحي الحصري - أفضل حلول الرشاقة المعتمدة">
+    <meta property="og:description" content="اكتشف المنتجات الصحية الأكثر طلباً وعالمية، مراجعات دقيقة وروابط مباشرة آمنة 100%.">
+    <meta property="og:type" content="website">
+    <meta property="og:image" content="/images/uploads/default-share.jpg"> <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://identity.netlify.com/v1/netlify-identity-widget.js"></script>
+
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800">
+
+    <header class="bg-white shadow-sm py-6 border-b border-gray-100">
+        <div class="max-w-4xl mx-auto px-4 text-center">
+            <h1 class="text-3xl font-bold text-green-600">مجلة الصحة والرشاقة الطبيعية</h1>
+            <p class="text-gray-500 mt-2 text-sm">ترشيحات حصرية مبنية على تجارب حقيقية وموثوقة</p>
+        </div>
+    </header>
+
+    <main class="max-w-4xl mx-auto px-4 py-10">
+        <div id="products-container" class="grid gap-8 md:grid-cols-2">
+            <div id="loading" class="text-center col-span-2 py-10 text-gray-400">جاري تحميل أحدث المنتجات المعتمدة...</div>
+        </div>
+    </main>
+
+    <footer class="bg-white border-t border-gray-100 py-6 text-center text-xs text-gray-400 mt-20">
+        جميع الحقوق محفوظة © مجلة الصحة والرشاقة الطبيعية 2026
+    </footer>
+
+    <script>
+        // جلب البيانات من ملف JSON وعرضها في الموقع
+        async function fetchProducts() {
+            try {
+                const response = await fetch('/data/products.json');
+                const data = await response.json();
+                const container = document.getElementById('products-container');
+                document.getElementById('loading').remove();
+
+                if (!data.products || data.products.length === 0) {
+                    container.innerHTML = '<p class="text-center col-span-2 text-gray-500">انتظرونا! سيتم نشر التحديثات والمنتجات الجديدة قريباً جداً.</p>';
+                    return;
+                }
+
+                // ترتيب المنتجات من الأحدث إلى الأقدم
+                const sortedProducts = data.products.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+                sortedProducts.forEach(product => {
+                    const card = document.createElement('div');
+                    card.className = "bg-white rounded-2xl shadow-md overflow-hidden border border-gray-100 hover:shadow-lg transition flex flex-col";
+                    card.innerHTML = `
+                        <img src="${product.image}" alt="${product.title}" class="w-full h-56 object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h2 class="text-xl font-bold text-gray-900 mb-3">${product.title}</h2>
+                            <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">${product.description}</p>
+                            <a href="${product.affiliate_link}" target="_blank" rel="noopener noreferrer" 
+                               class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-xl transition text-sm shadow-sm">
+                                التحقق من التوفر والخصم المتاح 
+                            </a>
+                        </div>
+                    `;
+                    container.appendChild(card);
+                });
+            } catch (error) {
+                console.error("Error fetching products:", error);
+            }
+        }
+
+        fetchProducts();
+
+        // السكربت الخاص بتحويل المستخدم للوحة التحكم فور تسجيل الدخول بنجاح
+        if (window.netlifyIdentity) {
+            window.netlifyIdentity.on("init", user => {
+                if (!user) {
+                    window.netlifyIdentity.on("login", () => {
+                        document.location.href = "/admin/";
+                    });
+                }
+            });
+        }
+    </script>
+</body>
+</html>
