@@ -1,6 +1,9 @@
 backend:
-  name: git-gateway
-  branch: main # تأكد أن هذا هو اسم الفرع الرئيسي في مستودع GitHub الخاص بك
+  name: github
+  repo: HAMMOU2310/AllAffiliate_Store
+  branch: main
+  client_id: "0f443b6966c6f7c1277eafbb68fe51d94cfcb8eb"
+  pkce: true
 
 media_folder: "images/uploads" # مجلد حفظ صور المنتجات
 public_folder: "/images/uploads"
