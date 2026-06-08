@@ -1,119 +1,81 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مجلة الصحة والرشاقة الطبيعية | بوابتك لأفضل المنتجات</title>
+    <title>Natural Health & Fitness Magazine</title>
 
-    <meta property="og:title" content="دليلك الصحي الحصري - أفضل حلول الرشاقة المعتمدة">
-    <meta property="og:description" content="اكتشف المنتجات الصحية الأكثر طلباً وعالمية، مراجعات دقيقة وروابط مباشرة آمنة 100%.">
+    <meta property="og:title" content="Natural Health & Fitness Magazine - Science-Backed Solutions">
+    <meta property="og:description" content="Discover science-backed natural solutions, weight loss tips, and fitness advice for sustainable health.">
     <meta property="og:type" content="website">
-    <meta property="og:image" content="https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80"> 
     
     <script src="https://cdn.tailwindcss.com"></script>
-
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
         .gradient-text {
             background: linear-gradient(to right, #16a34a, #059669);
             -webkit-background-clip: text;
+            background-clip: text;
             -webkit-text-fill-color: transparent;
         }
     </style>
 </head>
-<body class="bg-slate-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800">
 
-    <header class="bg-white shadow-sm py-8 border-b border-gray-100">
+    <header class="bg-white shadow-sm py-6 border-b border-gray-100">
         <div class="max-w-4xl mx-auto px-4 text-center">
-            <h1 class="text-4xl font-extrabold gradient-text mb-3">مجلة الصحة والرشاقة الطبيعية</h1>
-            <p class="text-gray-500 font-medium">ترشيحات حصرية مبنية على تجارب حقيقية وموثوقة</p>
+            <h1 class="text-3xl font-bold gradient-text">Natural Health & Fitness Magazine</h1>
+            <p class="text-gray-500 text-sm mt-2">Discover science-backed natural solutions, weight loss tips, and proven remedies</p>
         </div>
     </header>
 
-    <main class="max-w-5xl mx-auto px-4 py-12">
-        <div id="products-container" class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-            <div id="loading" class="text-center col-span-full py-20">
-                <div class="inline-block animate-spin rounded-full h-12 w-12 border-t-4 border-green-600 border-opacity-50"></div>
-                <p class="mt-4 text-gray-500 font-medium">جاري تحميل أحدث المنتجات المعتمدة...</p>
+    <main class="max-w-6xl mx-auto px-4 py-12">
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             </div>
-        </div>
     </main>
 
-    <footer class="bg-white border-t border-gray-200 py-8 text-center text-sm text-gray-400 mt-10">
-        <p>جميع الحقوق محفوظة © مجلة الصحة والرشاقة الطبيعية 2026</p>
-        <p class="mt-2 text-xs">إخلاء مسؤولية: يحتوي هذا الموقع على روابط عمولة (Affiliate Links).</p>
+    <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-gray-400 text-xs">
+        <p>&copy; 2026 Natural Health & Fitness Magazine. All rights reserved.</p>
     </footer>
 
     <script>
-        // دالة لجلب البيانات من قاعدة البيانات المحلية JSON
         async function fetchProducts() {
-            const container = document.getElementById('products-container');
-            const loading = document.getElementById('loading');
-
             try {
-                // نطلب ملف الـ JSON الذي يقوم وكيل البايثون بتحديثه
                 const response = await fetch('data/products.json');
+                const products = await response.json();
+                const container = document.getElementById('products-container');
+                container.innerHTML = '';
                 
-                if (!response.ok) {
-                    throw new Error("لا يمكن العثور على ملف المنتجات.");
-                }
-
-                const data = await response.json();
-                loading.remove();
-
-                // التحقق من وجود منتجات
-                if (!data || data.length === 0) {
-                    container.innerHTML = `
-                        <div class="col-span-full text-center py-20 bg-white rounded-2xl shadow-sm border border-gray-100">
-                            <span class="text-4xl block mb-4">⏳</span>
-                            <h3 class="text-xl font-bold text-gray-700 mb-2">انتظرونا!</h3>
-                            <p class="text-gray-500">سيتم نشر التحديثات والمنتجات الجديدة قريباً جداً.</p>
-                        </div>
-                    `;
-                    return;
-                }
-
-                // عرض المنتجات (تفترض مصفوفة المنتجات أنها مرتبة مسبقاً من الأحدث للأقدم بواسطة البايثون)
-                data.forEach(product => {
+                products.forEach(product => {
                     const card = document.createElement('div');
-                    card.className = "bg-white rounded-2xl shadow-sm hover:shadow-xl transition-shadow duration-300 overflow-hidden border border-gray-100 flex flex-col group";
+                    card.className = "bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col hover:shadow-md transition duration-300";
                     
-                    // توليد رابط المشاركة على Pinterest
-                    const currentUrl = encodeURIComponent(window.location.href);
-                    const pinterestShareUrl = `https://pinterest.com/pin/create/button/?url=${currentUrl}&media=${encodeURIComponent(product.image_url || product.image)}&description=${encodeURIComponent(product.title + " - " + product.description)}`;
+                    // تحضير رابط بنترست الذكي بالبيانات الجديدة الإنجليزية
+                    const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url)}&description=${encodeURIComponent(product.title + ' - ' + product.description)}`;
 
                     card.innerHTML = `
-                        <div class="relative overflow-hidden h-64">
-                            <img src="${product.image_url || product.image}" alt="${product.title}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500">
+                        <div class="relative">
+                            <img src="${product.image_url}" alt="${product.title}" class="w-full h-56 object-cover">
+                            <a href="${pinUrl}" target="_blank" class="absolute top-3 right-3 bg-[#e60023] hover:bg-[#b6001a] text-white p-2 rounded-full shadow-lg transition flex items-center justify-center" title="Pin to Pinterest">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.63 11.16-.1-.95-.2-2.4.04-3.43.22-.93 1.4-5.93 1.4-5.93s-.36-.71-.36-1.77c0-1.66.96-2.9 2.17-2.9 1.02 0 1.51.77 1.51 1.69 0 1.03-.65 2.56-.99 3.99-.28 1.19.6 2.16 1.77 2.16 2.12 0 3.76-2.24 3.76-5.48 0-2.87-2.06-4.87-5-4.87-3.4 0-5.4 2.56-5.4 5.19 0 1.03.4 2.14.9 2.74.1.12.11.23.08.35-.09.37-.29 1.18-.33 1.34-.05.22-.18.27-.41.16-1.53-.71-2.48-2.94-2.48-4.73 0-3.85 2.8-7.39 8.07-7.39 4.24 0 7.53 3.02 7.53 7.06 0 4.21-2.65 7.6-6.33 7.6-1.24 0-2.4-.64-2.8-1.4 0 0-.61 2.33-.76 2.9-.27 1.05-1.02 2.37-1.52 3.19 1.12.35 2.3.54 3.52.54 6.63 0 12-5.37 12-12S18.63 0 12 0z"/></svg>
+                            </a>
                         </div>
                         <div class="p-6 flex flex-col flex-grow">
-                            <h2 class="text-xl font-bold text-gray-900 mb-3 line-clamp-2">${product.title}</h2>
+                            <h2 class="text-xl font-bold text-gray-900 mb-2">${product.title}</h2>
                             <p class="text-gray-600 text-sm leading-relaxed mb-6 flex-grow">${product.description}</p>
-                            
-                            <div class="flex flex-col gap-3 mt-auto">
-                                <a href="${product.link || product.affiliate_link}" target="_blank" rel="noopener noreferrer" 
-                                   class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition-colors shadow-sm">
-                                   🛒 التحقق من التوفر والخصم 
-                                </a>
-                                
-                                <a href="${pinterestShareUrl}" target="_blank" rel="noopener noreferrer"
-                                   class="block w-full text-center bg-[#E60023] hover:bg-[#ad081b] text-white font-bold py-2 px-4 rounded-xl transition-colors shadow-sm text-sm flex items-center justify-center gap-2">
-                                   <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M12.017 0C5.396 0 .029 5.367.029 11.987c0 5.079 3.158 9.417 7.618 11.162-.105-.949-.199-2.403.041-3.439.219-.937 1.406-5.957 1.406-5.957s-.359-.72-.359-1.781c0-1.663.967-2.911 2.168-2.911 1.024 0 1.518.769 1.518 1.688 0 1.029-.653 2.567-.992 3.992-.285 1.193.6 2.165 1.775 2.165 2.128 0 3.768-2.245 3.768-5.487 0-2.861-2.063-4.869-5.008-4.869-3.41 0-5.409 2.562-5.409 5.199 0 1.033.394 2.143.889 2.741.099.12.112.225.085.345-.09.375-.293 1.199-.334 1.363-.053.225-.172.271-.401.165-1.495-.69-2.433-2.878-2.433-4.646 0-3.776 2.748-7.252 7.951-7.252 4.168 0 7.392 2.967 7.392 6.923 0 4.135-2.607 7.462-6.233 7.462-1.214 0-2.354-.629-2.758-1.379l-.749 2.848c-.269 1.045-1.004 2.352-1.498 3.146 1.123.345 2.306.535 3.55.535 6.607 0 11.985-5.365 11.985-11.987C23.97 5.367 18.633 0 12.017 0z"/></svg>
-                                   أنشئ دبوس (Pin) فوراً
-                                </a>
-                            </div>
+                            <a href="${product.affiliate_link}" target="_blank" rel="noopener noreferrer" 
+                               class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-semibold py-3 px-4 rounded-xl transition text-sm shadow-sm">
+                                Check Availability & Best Discount
+                            </a>
                         </div>
                     `;
                     container.appendChild(card);
                 });
             } catch (error) {
-                console.error("خطأ في جلب المنتجات:", error);
-                loading.innerHTML = `<p class="text-red-500 font-medium">عذراً، حدث خطأ أثناء تحميل المنتجات. يرجى تحديث الصفحة.</p>`;
+                console.error("Error fetching products:", error);
             }
         }
-
-        // تشغيل الدالة عند تحميل الصفحة
-        document.addEventListener('DOMContentLoaded', fetchProducts);
+        fetchProducts();
     </script>
 </body>
 </html>
