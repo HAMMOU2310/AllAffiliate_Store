@@ -7,13 +7,23 @@ from google import genai
 import os
 from datetime import datetime
 
+# استدعاء المكتبة الخاصة بقراءة الملفات المخفية
+from dotenv import load_dotenv
+
+# تفعيل قراءة الملف المخفي (.env) فور بدء السكربت
+load_dotenv()
+
 # ==========================================
 # CONFIGURATION
 # ==========================================
-# Put your Gemini API Key here
-api_key = "YOUR_API_KEY_HERE"
+# جلب مفتاح الـ API الخاص بك من ملف .env بأمان
+api_key = os.getenv("GEMINI_API_KEY")
 
-client = genai.Client(api_key=GEMINI_API_KEY)
+if not api_key:
+    print("[!] خطأ: لم يتم العثور على مفتاح API. تأكد من إضافته بشكل صحيح في ملف .env")
+    sys.exit(1)
+
+client = genai.Client(api_key=api_key)
 JSON_FILE_PATH = "data/products.json"
 
 # ==========================================
@@ -26,19 +36,15 @@ def scrape_product(url):
         response = requests.get(url, headers=headers, timeout=15)
         soup = BeautifulSoup(response.text, 'html.parser')
         
+        # استخراج النص فقط ليقرأه الذكاء الاصطناعي ويصيغ منه الوصف (بدون صور افتراضية)
         text_content = ' '.join([p.text for p in soup.find_all('p')])[:2000]
-        
-        image_url = "https://images.unsplash.com/photo-1490645935967-10de6ba17061?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80"
-        og_image = soup.find('meta', property='og:image')
-        if og_image:
-            image_url = og_image['content']
             
-        return {"text": text_content, "image_url": image_url, "url": url}
+        return {"text": text_content, "url": url}
     except Exception as e:
         print(f"[!] Scraping error: {e}")
         sys.exit(1)
 
-def generate_copy(data):
+def generate_copy(data, image_url):
     print("[*] Calling Gemini AI to generate high-converting English copy...")
     prompt = f"""
     You are an expert affiliate marketer and professional copywriter. Based on this product text: "{data['text']}"
@@ -46,7 +52,7 @@ def generate_copy(data):
     {{
         "title": "A catchy, attention-grabbing title under 10 words",
         "description": "A highly persuasive 3-line sales description focusing on the problem, solution, and a clear call-to-action suitable for Pinterest traffic",
-        "image_url": "{data['image_url']}",
+        "image_url": "{image_url}",
         "affiliate_link": "{data['url']}",
         "date": "{datetime.now().isoformat()}"
     }}
@@ -91,7 +97,7 @@ def deploy_to_cloudflare():
     print("[*] Pushing updates to GitHub to trigger Cloudflare build...")
     try:
         subprocess.run(["git", "add", JSON_FILE_PATH], check=True)
-        subprocess.run(["git", "commit", "-m", "Switch store to English and add new product"], check=True)
+        subprocess.run(["git", "commit", "-m", "Add new product with verified true image"], check=True)
         subprocess.run(["git", "push", "origin", "main"], check=True)
         print("✅ Congratulations! Your International English Store is live on Cloudflare.")
     except Exception as e:
@@ -101,12 +107,17 @@ def deploy_to_cloudflare():
 # EXECUTION
 # ==========================================
 if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print("Usage: python auto_publish.py <product_url>")
+    # التحقق من أنك قمت بإدخال الرابطين معاً في التيرمينال
+    if len(sys.argv) < 3:
+        print("❌ خطأ: يجب إدخال رابط كليك بانك ورابط الصورة الحقيقية معاً!")
+        print('الاستخدام الصحيح: python auto_publish.py "رابط_المنتج" "رابط_الصورة"')
         sys.exit(1)
         
     url = sys.argv[1]
+    custom_image_url = sys.argv[2] # الصورة الحقيقية التي أدخلتها أنت
+    
+    # تمرير البيانات بالترتيب الصحيح
     data = scrape_product(url)
-    product_json = generate_copy(data)
+    product_json = generate_copy(data, custom_image_url)
     update_database(product_json)
     deploy_to_cloudflare()
