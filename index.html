@@ -19,11 +19,10 @@
             -webkit-text-fill-color: transparent;
         }
 
-        /* تنسيق الصور والكروت لضمان التناسق التام */
         .product-card img {
             width: 100%;
-            height: 250px; /* توحيد ارتفاع الصور */
-            object-fit: cover; /* قص الصور بذكاء */
+            height: 250px; 
+            object-fit: cover; 
         }
         
         .product-card {
@@ -31,9 +30,25 @@
             flex-direction: column;
             height: 100%;
         }
+
+        /* تأثير حركي لظهور المنتجات بسلاسة */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-fade-in-up {
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
     </style>
 </head>
-<body class="bg-gray-50 text-gray-800">
+<body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
 
     <header class="bg-white shadow-sm py-6 border-b border-gray-100">
         <div class="max-w-4xl mx-auto px-4 text-center">
@@ -42,9 +57,15 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-12">
+    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow w-full">
         <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             </div>
+
+        <div class="text-center mt-12">
+            <button id="load-more-btn" class="hidden bg-white border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-bold py-3 px-8 rounded-xl transition duration-300 shadow-sm">
+                Load More Products
+            </button>
+        </div>
     </main>
 
     <footer class="bg-white border-t border-gray-100 py-6 mt-12 text-center text-gray-400 text-xs">
@@ -52,52 +73,80 @@
     </footer>
 
     <script>
+        let allProducts = []; // لتخزين جميع المنتجات
+        let currentIndex = 0; // لتتبع المنتجات المعروضة
+        const productsPerPage = 6; // عدد المنتجات في كل نقرة
+
         async function fetchProducts() {
             try {
                 const response = await fetch('data/products.json');
-                const products = await response.json();
-                const container = document.getElementById('products-container');
-                container.innerHTML = '';
+                allProducts = await response.json();
                 
-                products.forEach(product => {
-                    const card = document.createElement('div');
-                    card.className = "product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col";
-
-                    // تجهيز رابط بنترست الذكي بالبيانات الجديدة الإنجليزية
-                    const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url)}&description=${encodeURIComponent(product.title)}`;
-
-                    card.innerHTML = `
-                        <div class="relative">
-                            <img src="${product.image_url}" alt="${product.title}">
-                            <a href="${pinUrl}" target="_blank" class="absolute top-3 right-3 bg-[#e60023] hover:bg-red-700 text-white p-2 rounded-full shadow-md transition duration-300 flex items-center justify-center">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.19-2.41.04-3.45.21-.93 1.35-5.73 1.35-5.73s-.34-.69-.34-1.71c0-1.6 1.04-2.8 2.14-2.8 1.01 0 1.5.76 1.5 1.67 0 1.02-.65 2.54-.98 3.95-.28 1.18.59 2.14 1.75 2.14 2.1 0 3.72-2.22 3.72-5.42 0-2.84-2.04-4.82-4.94-4.82-3.37 0-5.34 2.53-5.34 5.14 0 1.02.39 2.11.88 2.71.1.12.11.23.08.36-.09.37-.29 1.18-.33 1.34-.05.22-.17.27-.4.16-1.5-.7-2.44-2.9-2.44-4.66 0-3.8 2.76-7.29 7.96-7.29 4.18 0 7.43 2.98 7.43 6.96 0 4.16-2.62 7.5-6.26 7.5-1.22 0-2.37-.64-2.76-1.39l-.75 2.86c-.27 1.05-1.01 2.37-1.5 3.17C8.91 23.74 10.41 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
-                                </svg>
-                            </a>
-                        </div>
-                        <div class="p-6 flex flex-col flex-grow">
-                            <h2 class="text-xl font-bold text-gray-900 mb-2">${product.title}</h2>
-                            <p class="text-gray-600 text-sm mb-4 flex-grow">${product.description || ''}</p>
-                            
-                            <a href="${product.affiliate_link || product.link || '#'}" target="_blank" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition duration-300">
-                                Check Availability & Best Discount
-                            </a>
-                            
-                            <a href="${pinUrl}" target="_blank" class="block w-full text-center bg-[#e60023] hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition duration-300 mt-3 flex items-center justify-center gap-2">
-                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
-                                    <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.19-2.41.04-3.45.21-.93 1.35-5.73 1.35-5.73s-.34-.69-.34-1.71c0-1.6 1.04-2.8 2.14-2.8 1.01 0 1.5.76 1.5 1.67 0 1.02-.65 2.54-.98 3.95-.28 1.18.59 2.14 1.75 2.14 2.1 0 3.72-2.22 3.72-5.42 0-2.84-2.04-4.82-4.94-4.82-3.37 0-5.34 2.53-5.34 5.14 0 1.02.39 2.11.88 2.71.1.12.11.23.08.36-.09.37-.29 1.18-.33 1.34-.05.22-.17.27-.4.16-1.5-.7-2.44-2.9-2.44-4.66 0-3.8 2.76-7.29 7.96-7.29 4.18 0 7.43 2.98 7.43 6.96 0 4.16-2.62 7.5-6.26 7.5-1.22 0-2.37-.64-2.76-1.39l-.75 2.86c-.27 1.05-1.01 2.37-1.5 3.17C8.91 23.74 10.41 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
-                                </svg>
-                                Pin it on Pinterest
-                            </a>
-                        </div>
-                    `;
-                    
-                    container.appendChild(card);
-                });
+                // عرض الدفعة الأولى من المنتجات
+                renderProducts();
             } catch (error) {
                 console.error("Error fetching products:", error);
             }
         }
+
+        function renderProducts() {
+            const container = document.getElementById('products-container');
+            const loadMoreBtn = document.getElementById('load-more-btn');
+            
+            // تحديد الدفعة الجديدة من المنتجات
+            const nextBatch = allProducts.slice(currentIndex, currentIndex + productsPerPage);
+            
+            nextBatch.forEach(product => {
+                const card = document.createElement('div');
+                // تمت إضافة كلاس الحركة .animate-fade-in-up هنا
+                card.className = "product-card animate-fade-in-up bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col";
+
+                const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url)}&description=${encodeURIComponent(product.title)}`;
+
+                card.innerHTML = `
+                    <div class="relative">
+                        <img src="${product.image_url}" alt="${product.title}">
+                        <a href="${pinUrl}" target="_blank" class="absolute top-3 right-3 bg-[#e60023] hover:bg-red-700 text-white p-2 rounded-full shadow-md transition duration-300 flex items-center justify-center">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.19-2.41.04-3.45.21-.93 1.35-5.73 1.35-5.73s-.34-.69-.34-1.71c0-1.6 1.04-2.8 2.14-2.8 1.01 0 1.5.76 1.5 1.67 0 1.02-.65 2.54-.98 3.95-.28 1.18.59 2.14 1.75 2.14 2.1 0 3.72-2.22 3.72-5.42 0-2.84-2.04-4.82-4.94-4.82-3.37 0-5.34 2.53-5.34 5.14 0 1.02.39 2.11.88 2.71.1.12.11.23.08.36-.09.37-.29 1.18-.33 1.34-.05.22-.17.27-.4.16-1.5-.7-2.44-2.9-2.44-4.66 0-3.8 2.76-7.29 7.96-7.29 4.18 0 7.43 2.98 7.43 6.96 0 4.16-2.62 7.5-6.26 7.5-1.22 0-2.37-.64-2.76-1.39l-.75 2.86c-.27 1.05-1.01 2.37-1.5 3.17C8.91 23.74 10.41 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
+                            </svg>
+                        </a>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h2 class="text-xl font-bold text-gray-900 mb-2">${product.title}</h2>
+                        <p class="text-gray-600 text-sm mb-4 flex-grow">${product.description || ''}</p>
+                        
+                        <a href="${product.affiliate_link || product.link || '#'}" target="_blank" class="block w-full text-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-4 rounded-xl transition duration-300">
+                            Check Availability & Best Discount
+                        </a>
+                        
+                        <a href="${pinUrl}" target="_blank" class="block w-full text-center bg-[#e60023] hover:bg-red-700 text-white font-bold py-3 px-4 rounded-xl transition duration-300 mt-3 flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 0C5.37 0 0 5.37 0 12c0 5.08 3.16 9.42 7.62 11.17-.1-.95-.19-2.41.04-3.45.21-.93 1.35-5.73 1.35-5.73s-.34-.69-.34-1.71c0-1.6 1.04-2.8 2.14-2.8 1.01 0 1.5.76 1.5 1.67 0 1.02-.65 2.54-.98 3.95-.28 1.18.59 2.14 1.75 2.14 2.1 0 3.72-2.22 3.72-5.42 0-2.84-2.04-4.82-4.94-4.82-3.37 0-5.34 2.53-5.34 5.14 0 1.02.39 2.11.88 2.71.1.12.11.23.08.36-.09.37-.29 1.18-.33 1.34-.05.22-.17.27-.4.16-1.5-.7-2.44-2.9-2.44-4.66 0-3.8 2.76-7.29 7.96-7.29 4.18 0 7.43 2.98 7.43 6.96 0 4.16-2.62 7.5-6.26 7.5-1.22 0-2.37-.64-2.76-1.39l-.75 2.86c-.27 1.05-1.01 2.37-1.5 3.17C8.91 23.74 10.41 24 12 24c6.63 0 12-5.37 12-12S18.63 0 12 0z"/>
+                            </svg>
+                            Pin it on Pinterest
+                        </a>
+                    </div>
+                `;
+                
+                container.appendChild(card);
+            });
+            
+            // تحديث المؤشر
+            currentIndex += productsPerPage;
+            
+            // إظهار أو إخفاء زر "عرض المزيد" بناءً على المنتجات المتبقية
+            if (currentIndex >= allProducts.length) {
+                loadMoreBtn.classList.add('hidden'); // إخفاء الزر
+            } else {
+                loadMoreBtn.classList.remove('hidden'); // إظهار الزر
+            }
+        }
+
+        // تفعيل زر "عرض المزيد"
+        document.getElementById('load-more-btn').addEventListener('click', renderProducts);
+
+        // بدء التنفيذ
         fetchProducts();
     </script>
 </body>
