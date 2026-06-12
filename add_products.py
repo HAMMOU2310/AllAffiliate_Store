@@ -1,10 +1,19 @@
 import sys
 import json
 import time
-from google import genai # المكتبة الجديدة
+import os
+from dotenv import load_dotenv
+from google import genai
 
-# 1. ضع مفتاح API الخاص بك هنا
-GEMINI_API_KEY = "AQ.Ab8RN6JkkDm4AvvmF8yFA9nustL3AyBF_Xz1Zofvbb8e7Zb8pg"
+# تفعيل قراءة الملف المخفي .env
+load_dotenv()
+
+# جلب المفتاح بأمان
+GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+
+if not GEMINI_API_KEY:
+    print("[!] خطأ: لم يتم العثور على مفتاح API. تأكد من إضافته في ملف .env")
+    sys.exit(1)
 
 # إعداد العميل (الطريقة الجديدة)
 client = genai.Client(api_key=GEMINI_API_KEY)
@@ -100,15 +109,18 @@ def main():
         print("\nلم يتم جلب بيانات أي منتج.")
         sys.exit(1)
 
+    # تعديل مسار الملف ليتطابق مع مجلد بيانات متجرك
+    file_path = 'data/products.json'
+    
     try:
-        with open('products.json', 'r', encoding='utf-8') as f:
+        with open(file_path, 'r', encoding='utf-8') as f:
             existing_products = json.load(f)
     except (FileNotFoundError, json.JSONDecodeError):
         existing_products = []
 
     existing_products.extend(new_products)
 
-    with open('products.json', 'w', encoding='utf-8') as f:
+    with open(file_path, 'w', encoding='utf-8') as f:
         json.dump(existing_products, f, indent=4, ensure_ascii=False)
 
     print(f"\nتم الانتهاء! تمت إضافة {len(new_products)} منتجات إلى متجرك بنجاح.")

@@ -1,29 +1,22 @@
-import sys
-import json
-import subprocess
-import requests
-from bs4 import BeautifulSoup
-from google import genai
 import os
-from datetime import datetime
-
-# استدعاء المكتبة الخاصة بقراءة الملفات المخفية
+import json
 from dotenv import load_dotenv
+from google import genai
 
-# تفعيل قراءة الملف المخفي (.env) فور بدء السكربت
+# تفعيل قراءة الملف المخفي فور بدء السكريبت
 load_dotenv()
 
-# ==========================================
-# CONFIGURATION
-# ==========================================
-# جلب مفتاح الـ API الخاص بك من ملف .env بأمان
+# جلب مفتاح API بأمان من ملف .env
 api_key = os.getenv("GEMINI_API_KEY")
 
 if not api_key:
     print("[!] خطأ: لم يتم العثور على مفتاح API. تأكد من إضافته بشكل صحيح في ملف .env")
-    sys.exit(1)
+    exit(1)
 
+# إعداد عميل Gemini باستخدام المفتاح الآمن
 client = genai.Client(api_key=api_key)
+
+# بقية كود السكريبت الخاص بك تستمر من هنا...
 JSON_FILE_PATH = "data/products.json"
 
 # ==========================================
