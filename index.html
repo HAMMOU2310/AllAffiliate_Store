@@ -46,6 +46,93 @@
         .animate-fade-in-up {
             animation: fadeInUp 0.6s ease-out forwards;
         }
+
+        /* =========================================
+           ستايلات قسم فيديوهات تيك توك الجديدة
+           ========================================= */
+        .video-feed-container {
+            height: 70vh; /* ارتفاع القسم */
+            width: 100%;
+            max-width: 400px; /* لضمان شكل الموبايل */
+            margin: 0 auto 40px auto;
+            overflow-y: scroll;
+            scroll-snap-type: y mandatory; /* التمرير السلس */
+            background-color: #000;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            /* إخفاء شريط التمرير لجمالية أفضل */
+            -ms-overflow-style: none;  
+            scrollbar-width: none;  
+        }
+        .video-feed-container::-webkit-scrollbar { 
+            display: none; 
+        }
+
+        .video-item {
+            height: 100%;
+            width: 100%;
+            scroll-snap-align: start;
+            position: relative;
+        }
+
+        .tiktok-video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .video-overlay {
+            position: absolute;
+            bottom: 30px;
+            left: 20px;
+            right: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            color: white;
+            text-shadow: 1px 1px 4px rgba(0,0,0,0.9);
+            z-index: 10;
+            pointer-events: none; /* لتمرير النقر للفيديو نفسه */
+        }
+
+        .video-product-title {
+            margin: 0;
+            font-size: 22px;
+            font-weight: bold;
+        }
+
+        .video-product-desc {
+            margin: 0;
+            font-size: 15px;
+            opacity: 0.95;
+            line-height: 1.4;
+        }
+
+        .buy-now-btn {
+            background: linear-gradient(45deg, #16a34a, #059669); /* لون متناسق مع متجرك */
+            color: white !important;
+            text-align: center;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 16px;
+            text-decoration: none;
+            animation: pulseButton 2s infinite;
+            box-shadow: 0 4px 15px rgba(22, 163, 74, 0.4);
+            transition: transform 0.2s;
+            pointer-events: auto; /* لتفعيل النقر على الزر */
+        }
+
+        .buy-now-btn:active {
+            transform: scale(0.95);
+        }
+
+        @keyframes pulseButton {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-800 flex flex-col min-h-screen">
@@ -57,9 +144,63 @@
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 py-12 flex-grow w-full">
-        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <main class="max-w-6xl mx-auto px-4 py-8 flex-grow w-full">
+        
+        <!-- =========================================
+             قسم فيديوهات التسوق السريع (تيك توك)
+             ========================================= -->
+        <div class="text-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">🔥 Trending Solutions</h2>
+            <p class="text-gray-500 text-sm">Swipe up to discover more</p>
+        </div>
+
+        <div class="video-feed-container">
+            <!-- الفيديو الأول التجريبي -->
+            <div class="video-item">
+                <!-- روابط الفيديوهات هنا تجريبية، ضع روابط فيديوهاتك لاحقاً -->
+                <video class="tiktok-video" loop muted playsinline>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay">
+                    <div class="product-info">
+                        <h3 class="video-product-title">ALLSLIMTEA</h3>
+                        <p class="video-product-desc">المشروب اليومي لحرق الدهون وتسريع الأيض بشكل طبيعي.</p>
+                    </div>
+                    <a href="https://hop.clickbank.net/?affiliate=fastbuy7&vendor=allslimtea&op=new&tid=tracking" target="_blank" class="buy-now-btn">
+                        احصل على الخصم الآن 🛍️
+                    </a>
+                </div>
             </div>
+
+            <!-- الفيديو الثاني التجريبي -->
+            <div class="video-item">
+                <video class="tiktok-video" loop muted playsinline>
+                    <source src="https://www.w3schools.com/html/mov_bbb.mp4" type="video/mp4">
+                </video>
+                <div class="video-overlay">
+                    <div class="product-info">
+                        <h3 class="video-product-title">BMX Weight Loss</h3>
+                        <p class="video-product-desc">حول جسمك إلى آلة لحرق الدهون 24/7 بخطوة واحدة يومياً.</p>
+                    </div>
+                    <a href="https://eab1dafo230vatd8kbuk0ccu19.hop.clickbank.net" target="_blank" class="buy-now-btn">
+                        اشترِ الآن 🛒
+                    </a>
+                </div>
+            </div>
+        </div>
+        <!-- نهاية قسم الفيديوهات -->
+
+        <!-- فاصل بصري -->
+        <hr class="border-gray-200 mb-10 max-w-2xl mx-auto">
+
+        <!-- قسم المنتجات العادية المستدعى من JSON -->
+        <div class="text-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-800">All Products</h2>
+        </div>
+
+        <div id="products-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <!-- يتم إضافة المنتجات هنا عبر الجافاسكريبت -->
+        </div>
 
         <div class="text-center mt-12">
             <button id="load-more-btn" class="hidden bg-white border-2 border-green-600 text-green-600 hover:bg-green-600 hover:text-white font-bold py-3 px-8 rounded-xl transition duration-300 shadow-sm">
@@ -73,16 +214,17 @@
     </footer>
 
     <script>
-        let allProducts = []; // لتخزين جميع المنتجات
-        let currentIndex = 0; // لتتبع المنتجات المعروضة
-        const productsPerPage = 6; // عدد المنتجات في كل نقرة
+        // =========================================
+        // 1. كود جلب المنتجات (الكود الأصلي الخاص بك)
+        // =========================================
+        let allProducts = []; 
+        let currentIndex = 0; 
+        const productsPerPage = 6; 
 
         async function fetchProducts() {
             try {
                 const response = await fetch('data/products.json');
                 allProducts = await response.json();
-                
-                // عرض الدفعة الأولى من المنتجات
                 renderProducts();
             } catch (error) {
                 console.error("Error fetching products:", error);
@@ -92,13 +234,10 @@
         function renderProducts() {
             const container = document.getElementById('products-container');
             const loadMoreBtn = document.getElementById('load-more-btn');
-            
-            // تحديد الدفعة الجديدة من المنتجات
             const nextBatch = allProducts.slice(currentIndex, currentIndex + productsPerPage);
             
             nextBatch.forEach(product => {
                 const card = document.createElement('div');
-                // تمت إضافة كلاس الحركة .animate-fade-in-up هنا
                 card.className = "product-card animate-fade-in-up bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden flex flex-col";
 
                 const pinUrl = `https://www.pinterest.com/pin/create/button/?url=${encodeURIComponent(window.location.href)}&media=${encodeURIComponent(product.image_url)}&description=${encodeURIComponent(product.title)}`;
@@ -128,26 +267,57 @@
                         </a>
                     </div>
                 `;
-                
                 container.appendChild(card);
             });
             
-            // تحديث المؤشر
             currentIndex += productsPerPage;
-            
-            // إظهار أو إخفاء زر "عرض المزيد" بناءً على المنتجات المتبقية
             if (currentIndex >= allProducts.length) {
-                loadMoreBtn.classList.add('hidden'); // إخفاء الزر
+                loadMoreBtn.classList.add('hidden'); 
             } else {
-                loadMoreBtn.classList.remove('hidden'); // إظهار الزر
+                loadMoreBtn.classList.remove('hidden'); 
             }
         }
 
-        // تفعيل زر "عرض المزيد"
         document.getElementById('load-more-btn').addEventListener('click', renderProducts);
-
-        // بدء التنفيذ
         fetchProducts();
+
+        // =========================================
+        // 2. كود تشغيل/إيقاف الفيديوهات (تيك توك ستايل)
+        // =========================================
+        document.addEventListener("DOMContentLoaded", function() {
+            const videos = document.querySelectorAll('.tiktok-video');
+            
+            // تشغيل الفيديو الذي يظهر في الشاشة فقط
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        // محاولة التشغيل، وإذا تم حظرها من المتصفح (يحدث أحياناً) نتركها صامتة
+                        let playPromise = entry.target.play();
+                        if (playPromise !== undefined) {
+                            playPromise.catch(error => {
+                                console.log("Auto-play prevented by browser");
+                            });
+                        }
+                    } else {
+                        entry.target.pause();
+                        entry.target.currentTime = 0; 
+                    }
+                });
+            }, { threshold: 0.6 }); 
+
+            videos.forEach(video => {
+                observer.observe(video);
+                
+                // تشغيل/إيقاف مؤقت عند النقر على الفيديو
+                video.addEventListener('click', () => {
+                    if (video.paused) {
+                        video.play();
+                    } else {
+                        video.pause();
+                    }
+                });
+            });
+        });
     </script>
 </body>
 </html>
